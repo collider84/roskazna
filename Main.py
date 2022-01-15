@@ -3,6 +3,14 @@
 import os
 import bs4  
 import requests
+from enum import Enum
+
+
+# Work mode enum
+class Mode(Enum):
+    ROOT = 1
+    PROM = 2
+    CRLS = 3
 
 
 # Roskazna URL
@@ -13,7 +21,6 @@ HOME = os.getenv('HOME')
 ROOT_FOLDER = HOME + '/roots/'
 PROMEZ_FOLDER = HOME + '/promez/'
 CRLS_FOLDER = HOME + '/crls/'
-
 
 
 def certifcate_downloader(folder, links):
@@ -35,6 +42,32 @@ def certifcate_downloader(folder, links):
 
 
 
+def perform_command(folder, mode):
+    """Perform command on every file in the folder"""
+    
+    # ROOT  -> sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mroot -file '/home/ivb/roots/Корневой сертификат ГУЦ ГОСТ 2012.crt'
+    # PROM  -> sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mca -file '/home/ivb/roots/Корневой сертификат ГУЦ ГОСТ 2012.crt'
+    # CRLS  -> sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mca -file '/home/ivb/crls/ucfk.crl' -crl
+
+    # Gel list of files in the folder
+    files = os.listdir(folder)
+    
+    # Do commands  with files
+    for file in files: 
+        if mode==Mode.ROOT:
+            cmd = "sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mroot -file '%s'" % (ROOT_FOLDER + file)
+        elif mode==Mode.PROM:
+            cmd = "sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mca -file '%s'" % (PROMEZ_FOLDER + file)
+        else:
+            cmd = "sudo /opt/cprocsp/bin/amd64/certmgr  -inst -store mca -file '%s' -crl" % (CRLS_FOLDER + file)  
+
+        # Make command
+        print("Execute cmd - %s" % cmd)
+        os.system(cmd)
+
+
+
+
 if __name__=='__main__':
     # Get web page content
     page = requests.get(URL)
@@ -51,5 +84,8 @@ if __name__=='__main__':
     certifcate_downloader(PROMEZ_FOLDER, promURL)
     certifcate_downloader(CRLS_FOLDER, crlURL)    
 
+    # Perform commands
+    perform_command(ROOT_FOLDER, Mode.ROOT)
+    perform_command(PROMEZ_FOLDER, Mode.PROM)
+    perform_command(CRLS_FOLDER, Mode.CRLS)
     
-        
