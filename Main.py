@@ -51,5 +51,5 @@ if __name__=='__main__':
     certifcate_downloader(PROMEZ_FOLDER, promURL)
     certifcate_downloader(CRLS_FOLDER, crlURL)    
 
-    print("fix it.")    
+    
         
