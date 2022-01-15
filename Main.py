@@ -49,5 +49,7 @@ if __name__=='__main__':
     # Download certificates by URLs
     certifcate_downloader(ROOT_FOLDER, rootURL)
     certifcate_downloader(PROMEZ_FOLDER, promURL)
-    certifcate_downloader(CRLS_FOLDER, crlURL)        
+    certifcate_downloader(CRLS_FOLDER, crlURL)    
+
+    print("fix it.")    
         
